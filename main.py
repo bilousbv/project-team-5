@@ -1,15 +1,12 @@
 from service.address_book_service import AddressBookService
 from constants.commands import Commands
-
-
-def parse_input(user_input: str):
-  cmd, *args = user_input.split()
-  cmd = cmd.strip().lower()
-  return cmd, *args
+from utils.table_printer import table_printer
+from utils.parse_input import parse_input
 
 
 def main():
   book = AddressBookService.load_data()
+
   print("Welcome to the assistant bot!")
   while True:
     user_input = input("Enter a command: ")
@@ -29,7 +26,10 @@ def main():
       case Commands.PHONE:
         print(AddressBookService.get_phones_for_contact(args, book))
       case Commands.ALL_CONTACTS:
-        book.show_all()
+        headers = ["Contact Name", "Phones", "Birthday"]
+        rows = [[record.name.value, '\n'.join(
+            p.value for p in record.phones), record.birthday] for record in book.data.values()]
+        print(table_printer(headers, rows))
       case Commands.ADD_BIRTHDAY:
         print(AddressBookService.add_birthday_to_contact(args, book))
       case Commands.SHOW_BIRTHDAY:
