@@ -20,3 +20,7 @@ class AddressBook(UserDict):
     def show_all(self):
         for record in self.data.values():
             print(str(record))
+
+    def remove_record(self, record: Record):
+        del self.data[record.name.value]
+        

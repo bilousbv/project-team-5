@@ -113,6 +113,21 @@ class AddressBookService:
         })
 
     return upcoming_birthdays
+  
+  @staticmethod
+  @input_error
+  def delete_contacts(args, book: AddressBook):
+    name, *_ = args
+    record = book.find(name)
+    if not record:
+      return "No contact for such name."
+    confirmation = input(f"Are you sure that you want to delete this contact '{name}'?(yes/no:").strip().lower()
+    if confirmation != "yes":
+      return "Deletion canceled."
+                         
+    book.remove_record(record)
+    return f"Contact '{name}' deleted."
+  
 
   @staticmethod
   def save_data(book: AddressBook, path: str = FILEPATH):
