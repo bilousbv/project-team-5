@@ -3,8 +3,6 @@ from model.record import Record
 from model.address_book import AddressBook
 from datetime import datetime, timedelta
 from constants.filepath import FILEPATH
-from model.phone import Phone
-from model.birthday import Birthday
 
 
 def input_error(func):
