@@ -1,3 +1,4 @@
+from model.email import Email
 from model.phone import Phone
 from model.name import Name
 
@@ -7,6 +8,7 @@ class Record:
         self.name = Name(name)
         self.phones = []
         self.birthday = None
+        self.email = None
 
     def add_phone(self, phone: str):
         self.phones.append(Phone(phone))
@@ -36,6 +38,13 @@ class Record:
     def add_birthday(self, birthday):
         self.birthday = birthday
 
+    def add_email(self, email):
+        try:
+            self.email = Email(email)
+            return "Email added successfully"
+        except ValueError as e:
+            return f"Error adding email: {str(e)}"
 
     def __str__(self):
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, birthday: {self.birthday}"
+        email = self.email.value if self.email else "No email"
+        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, Email: {email}, birthday: {self.birthday}"

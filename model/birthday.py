@@ -1,5 +1,3 @@
-
-
 class Birthday:
     def __init__(self, value):
         try:
