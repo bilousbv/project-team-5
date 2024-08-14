@@ -27,19 +27,22 @@ class AddressBookService:
   @staticmethod
   @input_error
   def add_contact(args, book: AddressBook):
-    name, phone, *_ = args
-    record = book.find(name)
-    message = "Contact updated."
-    if record is None:
-      record = Record(name)
-      book.add_record(record)
-      message = "Contact added."
-    if phone:
-      try:
-        record.add_phone(phone)
-      except ValueError:
-        return "Wrong phone format"
-    return message
+    name = input("Enter your name:")
+    record = Record(name)
+    phone = input("Enter your phone:")
+    try:
+      record.add_phone(phone)
+    except ValueError:
+      return "Wrong phone format!"
+    date_of_birth = input("Enter your birthday:")
+    try:
+      datetime.strptime(date_of_birth, "%d.%m.%Y")
+      record.add_birthday(date_of_birth)
+    except ValueError:
+      return "Wrong data format!"
+    # email = input("Enter your email:")   TODO change when email will be implemented
+    book.add_record(record)
+    return "Contact successfully added!"
 
   @staticmethod
   @input_error
