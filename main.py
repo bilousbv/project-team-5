@@ -1,3 +1,4 @@
+from colorama import Fore
 from service.address_book_service import AddressBookService
 from constants.commands import Commands
 
@@ -10,7 +11,8 @@ def parse_input(user_input: str):
 
 def main():
   book = AddressBookService.load_data()
-  print("Welcome to the assistant bot!")
+  print(f"{Fore.LIGHTCYAN_EX}Welcome to the assistant bot!{Fore.RESET}")
+
   while True:
     user_input = input("Enter a command: ")
     command, *args = parse_input(user_input)
@@ -37,7 +39,7 @@ def main():
       case Commands.BIRTHDAYS:
         print(AddressBookService.get_birthdays_for_next_week(book))
       case _:
-        print(f"Invalid command. Please check out available ones: {
+        print(f"{Fore.YELLOW}Invalid command. Please check out available ones:{Fore.RESET}{
             [command.value for command in Commands.__members__.values()]}")
 
 

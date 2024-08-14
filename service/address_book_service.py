@@ -1,4 +1,5 @@
 import pickle
+from colorama import Fore
 from model.record import Record
 from model.address_book import AddressBook
 from datetime import datetime, timedelta
@@ -9,12 +10,10 @@ def input_error(func):
   def inner(*args, **kwargs):
     try:
       return func(*args, **kwargs)
-    except IndexError:
-      return "Enter the argument for the command"
-    except ValueError:
-      return "Enter the argument for the command"
+    except (ValueError, IndexError):
+      return f"{Fore.LIGHTRED_EX}Enter the argument for the command{Fore.RESET}"
     except KeyError:
-      return "No such contact"
+      return f"{Fore.LIGHTRED_EX}No such contact{Fore.RESET}"
 
   return inner
 
@@ -29,16 +28,15 @@ class AddressBookService:
   def add_contact(args, book: AddressBook):
     name, phone, *_ = args
     record = book.find(name)
-    message = "Contact updated."
+    message = f"{Fore.GREEN}Contact updated.{Fore.RESET}"
     if record is None:
       record = Record(name)
       book.add_record(record)
-      message = "Contact added."
+      message = f"{Fore.GREEN}Contact added.{Fore.RESET}"
     if phone:
-      try:
-        record.add_phone(phone)
-      except ValueError:
-        return "Wrong phone format"
+      is_added = record.add_phone(phone)
+      if not is_added:
+        raise ValueError
     return message
 
   @staticmethod
@@ -47,7 +45,7 @@ class AddressBookService:
     name, old_phone, new_phone, *_ = args
     record = book.find(name)
     if not record:
-      return "No contact for such name"
+      return f"{Fore.YELLOW}No contact for such name{Fore.RESET}"
     return record.edit_phone(old_phone, new_phone)
 
   @staticmethod
@@ -56,7 +54,7 @@ class AddressBookService:
     name, *_ = args
     record = book.find(name)
     if not record:
-      return "No contact for such name"
+      return f"{Fore.YELLOW}No contact for such name{Fore.RESET}"
     phones = ""
     for phone in record.phones:
       phones = phones + " " + phone.value
@@ -68,13 +66,13 @@ class AddressBookService:
     name, date_of_birth, *_ = args
     record = book.find(name)
     if not record:
-      return "No contact for such name"
+      return f"{Fore.YELLOW}No contact for such name{Fore.RESET}"
     try:
       datetime.strptime(date_of_birth, "%d.%m.%Y")
       record.add_birthday(date_of_birth)
-      return "Date of birth added"
+      return f"{Fore.GREEN}Date of birth added{Fore.RESET}"
     except ValueError:
-      return "Wrong data format"
+      return f"{Fore.RED}Wrong data format{Fore.RESET}"
 
   @staticmethod
   @input_error
@@ -82,7 +80,7 @@ class AddressBookService:
     name, *_ = args
     record = book.find(name)
     if not record:
-      return "No contact for such name"
+      return f"{Fore.YELLOW}No contact for such name{Fore.RESET}"
     return record.birthday
 
   @staticmethod
