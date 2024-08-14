@@ -1,1 +1,2 @@
-FILEPATH = "data/addressbook.pkl"
+ADDRESS_BOOK_FILEPATH = "data/addressbook.pkl"
+NOTE_BOOK_FILEPATH = "data/notebook.pkl"
