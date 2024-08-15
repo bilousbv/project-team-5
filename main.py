@@ -1,3 +1,4 @@
+from colorama import Fore
 from service.address_book_service import AddressBookService
 from constants.commands import Commands
 from utils.table_printer import table_printer
@@ -8,6 +9,10 @@ def main():
   book = AddressBookService.load_data()
 
   print("Welcome to the assistant bot!")
+  contacts_headers = [f"{Fore.LIGHTBLUE_EX}Contact Name{Fore.RESET}", f"{
+      Fore.LIGHTBLUE_EX}Phones{Fore.RESET}", f"{Fore.LIGHTBLUE_EX}Birthday{Fore.RESET}"]
+  contacts_rows = [[record.name.value, '\n'.join(
+      p.value for p in record.phones), record.birthday] for record in book.data.values()]
   while True:
     user_input = input("Enter a command: ")
     command, *args = parse_input(user_input)
@@ -26,10 +31,7 @@ def main():
       case Commands.PHONE:
         print(AddressBookService.get_phones_for_contact(args, book))
       case Commands.ALL_CONTACTS:
-        headers = ["Contact Name", "Phones", "Birthday"]
-        rows = [[record.name.value, '\n'.join(
-            p.value for p in record.phones), record.birthday] for record in book.data.values()]
-        print(table_printer(headers, rows))
+        print(table_printer(contacts_headers, contacts_rows))
       case Commands.ADD_BIRTHDAY:
         print(AddressBookService.add_birthday_to_contact(args, book))
       case Commands.SHOW_BIRTHDAY:
