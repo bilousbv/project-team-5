@@ -12,17 +12,8 @@ def parse_input(user_input: str):
     return cmd, *args
 
 
-def completer(text, state):
-    options = [command for command in Commands.all_commands()
-               if command.startswith(text)]
-    if state < len(options):
-        return options[state]
-    else:
-        return None
-
-
 def main():
-    readline.set_completer(completer)
+    readline.set_completer(Commands.completer)
     readline.parse_and_bind('tab: complete')
 
     address_book = AddressBookService.load_data()
@@ -42,7 +33,7 @@ def main():
             case Commands.HELLO:
                 print("How can I help you?")
             case Commands.ADD_CONTACT:
-                print(AddressBookService.add_contact(args, address_book))
+                print(AddressBookService.add_contact(address_book))
             case Commands.CHANGE_CONTACT:
                 print(AddressBookService.change_contact_number(args, address_book))
             case Commands.PHONE:

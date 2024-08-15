@@ -26,15 +26,6 @@ class Commands(Enum):
         return None
 
     @classmethod
-    def get_command(cls, command: str):
-        for cmd in cls:
-            if isinstance(cmd.value, list) and command in cmd.value:
-                return cmd
-            if isinstance(cmd.value, str) and command == cmd.value:
-                return cmd
-        return None
-
-    @classmethod
     def all_commands(cls):
         commands = []
         for cmd in cls:
@@ -43,3 +34,12 @@ class Commands(Enum):
             else:
                 commands.append(cmd.value)
         return commands
+
+    @staticmethod
+    def completer(text, state):
+        options = [command for command in Commands.all_commands()
+                   if command.startswith(text)]
+        if state < len(options):
+            return options[state]
+        else:
+            return None
