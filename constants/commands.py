@@ -13,6 +13,8 @@ class Commands(Enum):
     BIRTHDAYS = 'birthdays'
     ADD_NOTE = 'add-note'
     SHOW_NOTES = 'all-notes'
+    FIND_NOTE = 'find-note'
+    DELETE_NOTE = 'delete-note'
 
     @classmethod
     def get_command(cls, command: str):
