@@ -1,3 +1,4 @@
+from colorama import Fore
 from model.phone import Phone
 from model.name import Name
 
@@ -9,7 +10,12 @@ class Record:
         self.birthday = None
 
     def add_phone(self, phone: str):
-        self.phones.append(Phone(phone))
+        try:
+            self.phones.append(Phone(phone))
+            return True
+        except ValueError as e:
+            print(e)
+            return False
 
     def remove_phone(self, phone: str):
         for i in self.phones[:]:
@@ -22,11 +28,11 @@ class Record:
                 try:
                     self.phones.append(Phone(new_phone))
                 except ValueError:
-                    return "New phone value is incorrect"
+                    return f"{Fore.LIGHTRED_EX}New phone value is incorrect{Fore.RESET}"
                 self.phones.remove(i)
-                return "Phone updated"
+                return f"{Fore.GREEN}Phone updated{Fore.RESET}"
 
-        return "Phone to edit does not exists for such user"
+        return f"{Fore.LIGHTRED_EX}Phone to edit does not exists for such user{Fore.RESET}"
 
     def find_phone(self, phone: str):
         for i in self.phones:
