@@ -35,7 +35,7 @@ class Record:
             if i.value == phone:
                 return i
 
-    def add_birthday(self, birthday):
+    def add_birthday(self, birthday: str):
         self.birthday = birthday
 
     def add_email(self, email):
@@ -45,7 +45,7 @@ class Record:
         except ValueError as e:
             return f"Error adding email: {str(e)}"
 
-    def __str__(self):
+    def __str__(self) -> str:
         email = self.email.value if self.email else "No email"
         return (f"Contact name: {self.name.value},"
                 f" phones: {'; '.join(p.value for p in self.phones)},"

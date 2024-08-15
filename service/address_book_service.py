@@ -2,7 +2,7 @@ import pickle
 from model.record import Record
 from model.address_book import AddressBook
 from datetime import datetime, timedelta
-from constants.filepath import FILEPATH
+from constants.filepath import ADDRESS_BOOK_FILEPATH
 
 
 def input_error(func):
@@ -20,26 +20,25 @@ def input_error(func):
 
 
 class AddressBookService:
-
-    def __init__(self):
-        pass
-
     @staticmethod
     @input_error
-    def add_contact(args, book: AddressBook):
-        name, phone, *_ = args
-        record = book.find(name)
-        message = "Contact updated."
-        if record is None:
-            record = Record(name)
-            book.add_record(record)
-            message = "Contact added."
-        if phone:
-            try:
-                record.add_phone(phone)
-            except ValueError:
-                return "Wrong phone format"
-        return message
+    def add_contact(book: AddressBook):
+        name = input("Enter your name:")
+        record = Record(name)
+        phone = input("Enter your phone:")
+        try:
+            record.add_phone(phone)
+        except ValueError:
+            return "Wrong phone format!"
+        date_of_birth = input("Enter your birthday:")
+        try:
+            datetime.strptime(date_of_birth, "%d.%m.%Y")
+            record.add_birthday(date_of_birth)
+        except ValueError:
+            return "Wrong data format!"
+        # email = input("Enter your email:")   TODO change when email will be implemented
+        book.add_record(record)
+        return "Contact successfully added!"
 
     @staticmethod
     @input_error
@@ -136,7 +135,36 @@ class AddressBookService:
             pickle.dump(book, f)
 
     @staticmethod
-    def load_data(path: str = FILEPATH):
+    @input_error
+    def delete_contacts(args, book: AddressBook):
+        """
+           Deletes the existing contact
+
+            Args:
+                args (List[str]): List containing the name.
+                book (AddressBook): The address book instance.
+
+            Returns:
+                str: Success message or error.
+        """
+        name, *_ = args
+        record = book.find(name)
+        if not record:
+            return "No contact for such name."
+        confirmation = input(f"Are you sure that you want to delete this contact '{name}'?(yes/no:").strip().lower()
+        if confirmation != "yes":
+            return "Deletion canceled."
+
+        book.remove_record(record)
+        return f"Contact '{name}' deleted."
+
+    @staticmethod
+    def save_data(book: AddressBook, path: str = ADDRESS_BOOK_FILEPATH):
+        with open(path, "wb") as f:
+            pickle.dump(book, f)
+
+    @staticmethod
+    def load_data(path: str = ADDRESS_BOOK_FILEPATH):
         try:
             with open(path, "rb") as f:
                 return pickle.load(f)
