@@ -15,7 +15,7 @@ def parse_input(user_input: str):
 
 def main():
     readline.set_completer(Commands.completer)
-    if 'libedit' in readline.__doc__:
+    if readline.__doc__ and 'libedit' in readline.__doc__:
         readline.parse_and_bind("bind ^I rl_complete")
     else:
         readline.parse_and_bind("tab: complete")
