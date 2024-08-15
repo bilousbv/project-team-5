@@ -3,143 +3,188 @@ from colorama import Fore
 from model.record import Record
 from model.address_book import AddressBook
 from datetime import datetime, timedelta
-from constants.filepath import FILEPATH
+from constants.filepath import ADDRESS_BOOK_FILEPATH
 
 
 def input_error(func):
-  def inner(*args, **kwargs):
-    try:
-      return func(*args, **kwargs)
-    except (ValueError, IndexError):
-      return f"{Fore.LIGHTRED_EX}Enter the argument for the command{Fore.RESET}"
-    except KeyError:
-      return f"{Fore.LIGHTRED_EX}No such contact{Fore.RESET}"
+    def inner(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except (ValueError, IndexError):
+            return f"{Fore.LIGHTRED_EX}Enter the argument for the command{Fore.RESET}"
+        except KeyError:
+            return f"{Fore.LIGHTRED_EX}No such contact{Fore.RESET}"
 
-  return inner
+    return inner
 
 
 class AddressBookService:
+    @staticmethod
+    @input_error
+    def add_contact(book: AddressBook):
+        name = input("Enter your name: ")
+        record = Record(name)
+        phone = input("Enter your phone: ")
+        try:
+            record.add_phone(phone)
+        except ValueError:
+            return f"{Fore.RED}Wrong phone format!{Fore.RESET}"
+        date_of_birth = input("Enter your birthday: ")
+        try:
+            datetime.strptime(date_of_birth, "%d.%m.%Y")
+            record.add_birthday(date_of_birth)
+        except ValueError:
+            return f"{Fore.RED}Wrong phone format!{Fore.RESET}"
+        # email = input("Enter your email:")   TODO change when email will be implemented
+        book.add_record(record)
+        return f"{Fore.GREEN}Contact successfully added!{Fore.RESET}"
 
-  def __init__(self):
-    pass
+    @staticmethod
+    @input_error
+    def change_contact_number(args, book: AddressBook):
+        """
+            Change the phone number of an existing contact.
 
-  @staticmethod
-  @input_error
-  def add_contact(args, book: AddressBook):
-    name = input("Enter your name:")
-    record = Record(name)
-    phone = input("Enter your phone:")
-    try:
-      record.add_phone(phone)
-    except ValueError:
-      return "Wrong phone format!"
-    date_of_birth = input("Enter your birthday:")
-    try:
-      datetime.strptime(date_of_birth, "%d.%m.%Y")
-      record.add_birthday(date_of_birth)
-    except ValueError:
-      return "Wrong data format!"
-    # email = input("Enter your email:")   TODO change when email will be implemented
-    book.add_record(record)
-    return "Contact successfully added!"
+            Args:
+                args (List[str]): List containing the name, old phone number, and new phone number.
+                book (AddressBook): The address book instance.
 
-  @staticmethod
-  @input_error
-  def change_contact_number(args, book: AddressBook):
-    name, old_phone, new_phone, *_ = args
-    record = book.find(name)
-    if not record:
-      return f"{Fore.YELLOW}No contact for such name{Fore.RESET}"
-    return record.edit_phone(old_phone, new_phone)
+            Returns:
+                str: Success or error message.
+        """
+        name, old_phone, new_phone, *_ = args
+        record = book.find(name)
+        if not record:
+            return f"{Fore.YELLOW}No contact for such name{Fore.RESET}"
+        return record.edit_phone(old_phone, new_phone)
 
-  @staticmethod
-  @input_error
-  def get_phones_for_contact(args, book: AddressBook):
-    name, *_ = args
-    record = book.find(name)
-    if not record:
-      return f"{Fore.YELLOW}No contact for such name{Fore.RESET}"
-    phones = ""
-    for phone in record.phones:
-      phones = phones + " " + phone.value
-    return phones
+    @staticmethod
+    @input_error
+    def get_phones_for_contact(args, book: AddressBook):
+        name, *_ = args
+        record = book.find(name)
+        if not record:
+            return f"{Fore.YELLOW}No contact for such name{Fore.RESET}"
+        phones = ""
+        for phone in record.phones:
+            phones = phones + " " + phone.value
+        return phones
 
-  @staticmethod
-  @input_error
-  def add_birthday_to_contact(args, book: AddressBook):
-    name, date_of_birth, *_ = args
-    record = book.find(name)
-    if not record:
-      return f"{Fore.YELLOW}No contact for such name{Fore.RESET}"
-    try:
-      datetime.strptime(date_of_birth, "%d.%m.%Y")
-      record.add_birthday(date_of_birth)
-      return f"{Fore.GREEN}Date of birth added{Fore.RESET}"
-    except ValueError:
-      return f"{Fore.RED}Wrong data format{Fore.RESET}"
+    @staticmethod
+    @input_error
+    def add_birthday_to_contact(args, book: AddressBook):
+        """
+           Add a birthday to an existing contact.
 
-  @staticmethod
-  @input_error
-  def get_birthday_for_contact(args, book: AddressBook):
-    name, *_ = args
-    record = book.find(name)
-    if not record:
-      return f"{Fore.YELLOW}No contact for such name{Fore.RESET}"
-    return record.birthday
+           Args:
+               args (List[str]): List containing the name and birthday.
+               book (AddressBook): The address book instance.
 
-  @staticmethod
-  @input_error
-  def get_birthdays_for_next_week(book: AddressBook):
-    today = datetime.today().date()
-    upcoming_birthdays = []
-    end_date = today + timedelta(days=7)
+           Returns:
+               str: Success message indicating birthday addition.
+       """
+        name, date_of_birth, *_ = args
+        record = book.find(name)
+        if not record:
+            return f"{Fore.YELLOW}No contact for such name{Fore.RESET}"
+        try:
+            datetime.strptime(date_of_birth, "%d.%m.%Y")
+            record.add_birthday(date_of_birth)
+            return f"{Fore.GREEN}Date of birth added{Fore.RESET}"
+        except ValueError:
+            return f"{Fore.RED}Wrong data format{Fore.RESET}"
 
-    for record in book.data.values():
-      name = record.name.value
-      birthday_str = record.birthday
-      birthday = datetime.strptime(birthday_str, '%d.%m.%Y').date()
+    @staticmethod
+    @input_error
+    def get_birthday_for_contact(args, book: AddressBook):
+        """
+            Show the birthday of a contact.
 
-      birthday_this_year = birthday.replace(year=today.year)
+            Args:
+                args (List[str]): List containing the name.
+                book (AddressBook): The address book instance.
 
-      if birthday_this_year < today:
-        birthday_this_year = birthday.replace(year=today.year + 1)
+            Returns:
+                str: The birthday or an error message.
+        """
+        name, *_ = args
+        record = book.find(name)
+        if not record:
+            return f"{Fore.YELLOW}No contact for such name{Fore.RESET}"
+        return record.birthday
 
-      if today <= birthday_this_year <= end_date:
-        if birthday_this_year.weekday() in (5, 6):
-          birthday_this_year += timedelta(days=(7 -
-                                          birthday_this_year.weekday()))
+    @staticmethod
+    @input_error
+    def get_birthdays_for_next_week(book: AddressBook):
+        """
+           Show upcoming birthdays.
 
-        upcoming_birthdays.append({
-            'name': name,
-            'congratulation_date': birthday_this_year.strftime('%d.%m.%Y')
-        })
+           Args:
+               book (AddressBook): The address book instance.
 
-    return upcoming_birthdays
+           Returns:
+               str: List of upcoming birthdays or a message indicating none.
+       """
+        today = datetime.today().date()
+        upcoming_birthdays = []
+        end_date = today + timedelta(days=7)
 
-  @staticmethod
-  @input_error
-  def delete_contacts(args, book: AddressBook):
-    name, *_ = args
-    record = book.find(name)
-    if not record:
-      return "No contact for such name."
-    confirmation = input(f"Are you sure that you want to delete this contact '{
-                         name}'?(yes/no:").strip().lower()
-    if confirmation != "yes":
-      return "Deletion canceled."
+        for record in book.data.values():
+            name = record.name.value
+            birthday_str = record.birthday
+            birthday = datetime.strptime(birthday_str, '%d.%m.%Y').date()
 
-    book.remove_record(record)
-    return f"Contact '{name}' deleted."
+            birthday_this_year = birthday.replace(year=today.year)
 
-  @staticmethod
-  def save_data(book: AddressBook, path: str = FILEPATH):
-    with open(path, "wb") as f:
-      pickle.dump(book, f)
+            if birthday_this_year < today:
+                birthday_this_year = birthday.replace(year=today.year + 1)
 
-  @staticmethod
-  def load_data(path: str = FILEPATH):
-    try:
-      with open(path, "rb") as f:
-        return pickle.load(f)
-    except FileNotFoundError:
-      return AddressBook()
+            if today <= birthday_this_year <= end_date:
+                if birthday_this_year.weekday() in (5, 6):
+                    birthday_this_year += timedelta(days=(7 -
+                                                          birthday_this_year.weekday()))
+
+                upcoming_birthdays.append({
+                    'name': name,
+                    'congratulation_date': birthday_this_year.strftime('%d.%m.%Y')
+                })
+
+        return upcoming_birthdays
+
+    @staticmethod
+    @input_error
+    def delete_contacts(args, book: AddressBook):
+        """
+           Deletes the existing contact
+
+            Args:
+                args (List[str]): List containing the name.
+                book (AddressBook): The address book instance.
+
+            Returns:
+                str: Success message or error.
+        """
+        name, *_ = args
+        record = book.find(name)
+        if not record:
+            return f"{Fore.YELLOW}No contact for such name{Fore.RESET}"
+        confirmation = input(f"Are you sure that you want to delete this contact '{
+                             name}'?(yes/no:").strip().lower()
+        if confirmation != "yes":
+            return "Deletion canceled."
+
+        book.remove_record(record)
+        return f"Contact '{name}' deleted."
+
+    @staticmethod
+    def save_data(book: AddressBook, path: str = ADDRESS_BOOK_FILEPATH):
+        with open(path, "wb") as f:
+            pickle.dump(book, f)
+
+    @staticmethod
+    def load_data(path: str = ADDRESS_BOOK_FILEPATH):
+        try:
+            with open(path, "rb") as f:
+                return pickle.load(f)
+        except FileNotFoundError:
+            return AddressBook()
