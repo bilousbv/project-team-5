@@ -26,18 +26,22 @@ class AddressBookService:
   @staticmethod
   @input_error
   def add_contact(args, book: AddressBook):
-    name, phone, *_ = args
-    record = book.find(name)
-    message = f"{Fore.GREEN}Contact updated.{Fore.RESET}"
-    if record is None:
-      record = Record(name)
-      book.add_record(record)
-      message = f"{Fore.GREEN}Contact added.{Fore.RESET}"
-    if phone:
-      is_added = record.add_phone(phone)
-      if not is_added:
-        raise ValueError
-    return message
+    name = input("Enter your name:")
+    record = Record(name)
+    phone = input("Enter your phone:")
+    try:
+      record.add_phone(phone)
+    except ValueError:
+      return "Wrong phone format!"
+    date_of_birth = input("Enter your birthday:")
+    try:
+      datetime.strptime(date_of_birth, "%d.%m.%Y")
+      record.add_birthday(date_of_birth)
+    except ValueError:
+      return "Wrong data format!"
+    # email = input("Enter your email:")   TODO change when email will be implemented
+    book.add_record(record)
+    return "Contact successfully added!"
 
   @staticmethod
   @input_error
@@ -111,6 +115,21 @@ class AddressBookService:
         })
 
     return upcoming_birthdays
+
+  @staticmethod
+  @input_error
+  def delete_contacts(args, book: AddressBook):
+    name, *_ = args
+    record = book.find(name)
+    if not record:
+      return "No contact for such name."
+    confirmation = input(f"Are you sure that you want to delete this contact '{
+                         name}'?(yes/no:").strip().lower()
+    if confirmation != "yes":
+      return "Deletion canceled."
+
+    book.remove_record(record)
+    return f"Contact '{name}' deleted."
 
   @staticmethod
   def save_data(book: AddressBook, path: str = FILEPATH):
