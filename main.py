@@ -1,4 +1,6 @@
 import readline
+import rlcompleter
+
 from service.address_book_service import AddressBookService
 from constants.commands import Commands
 from service.notes_service import NoteService
@@ -23,7 +25,10 @@ def completer(text, state):
 
 def main():
     readline.set_completer(completer)
-    readline.parse_and_bind('tab: complete')
+    if 'libedit' in readline.__doc__:
+        readline.parse_and_bind("bind ^I rl_complete")
+    else:
+        readline.parse_and_bind("tab: complete")
     book = AddressBookService.load_data()
     notes_book = NoteService.load_data()
     print("Welcome to the assistant bot!")
