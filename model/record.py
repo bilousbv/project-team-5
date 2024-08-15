@@ -43,7 +43,7 @@ class Record:
             self.email = Email(email)
             return "Email added successfully"
         except ValueError as e:
-            return f"Error adding email: {str(e)}"
+            raise ValueError(f"Error adding email: {str(e)}")
 
     def __str__(self) -> str:
         email = self.email.value if self.email else "No email"

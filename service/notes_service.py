@@ -14,7 +14,7 @@ init()
 class NoteService:
     def add_field(self, note: Note, field_name: str):
         try:
-            user_input = str(input(f'{Fore.BLUE}Enter the note {field_name}(q - for quit):{Style.RESET_ALL}'))
+            user_input = str(input(f'{Fore.BLUE}Enter the note {field_name}(q - for quit): {Style.RESET_ALL}'))
             if user_input.lower() is QUIT_COMMAND:
                 return None
 

@@ -40,7 +40,7 @@ def main():
             case Commands.BIRTHDAYS:
                 print(AddressBookService.get_birthdays_for_next_week(address_book))
             case Commands.ADD_EMAIL:
-                print(AddressBookService.add_email_to_contact(args, book))
+                print(AddressBookService.add_email_to_contact(args, address_book))
             case Commands.ADD_NOTE:
                 NoteService.add_note(NoteService(), notes_book)
             case Commands.SHOW_NOTES:
@@ -50,8 +50,8 @@ def main():
             case Commands.DELETE_NOTE:
                 print(NoteService.delete_note(args, notes_book))
             case _:
-                print(f"Invalid command. Please check out available ones: {
-                [command.value for command in Commands.__members__.values()]}")
+                print(f"Invalid command. Please check out available ones:"
+                      f" {[command.value for command in Commands.__members__.values()]}")
 
 
 if __name__ == "__main__":

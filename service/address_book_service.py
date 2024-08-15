@@ -23,14 +23,14 @@ class AddressBookService:
     @staticmethod
     @input_error
     def add_contact(book: AddressBook):
-        name = input("Enter your name:")
+        name = input("Enter your name: ")
         record = Record(name)
-        phone = input("Enter your phone:")
+        phone = input("Enter your phone: ")
         try:
             record.add_phone(phone)
         except ValueError:
             return "Wrong phone format!"
-        date_of_birth = input("Enter your birthday:")
+        date_of_birth = input("Enter your birthday: ")
         try:
             datetime.strptime(date_of_birth, "%d.%m.%Y")
             record.add_birthday(date_of_birth)
@@ -130,28 +130,13 @@ class AddressBookService:
             return "Invalid email address"
 
     @staticmethod
-    def save_data(book: AddressBook, path: str = FILEPATH):
-        with open(path, "wb") as f:
-            pickle.dump(book, f)
-
-    @staticmethod
     @input_error
-    def delete_contacts(args, book: AddressBook):
-        """
-           Deletes the existing contact
-
-            Args:
-                args (List[str]): List containing the name.
-                book (AddressBook): The address book instance.
-
-            Returns:
-                str: Success message or error.
-        """
+    def delete_contacts(args, book: ADDRESS_BOOK_FILEPATH):
         name, *_ = args
         record = book.find(name)
         if not record:
             return "No contact for such name."
-        confirmation = input(f"Are you sure that you want to delete this contact '{name}'?(yes/no:").strip().lower()
+        confirmation = input(f"Are you sure that you want to delete this contact '{name}'?(yes/no): ").strip().lower()
         if confirmation != "yes":
             return "Deletion canceled."
 
