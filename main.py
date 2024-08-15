@@ -1,16 +1,31 @@
+import readline
 from service.address_book_service import AddressBookService
 from constants.commands import Commands
 
 
 def parse_input(user_input: str):
+  if not user_input.strip():
+    return None, []
   cmd, *args = user_input.split()
   cmd = cmd.strip().lower()
   return cmd, *args
 
 
+def completer(text, state):
+  options = [command for command in Commands.all_commands()
+             if command.startswith(text)]
+  if state < len(options):
+    return options[state]
+  else:
+    return None
+
+
 def main():
+  readline.set_completer(completer)
+  readline.parse_and_bind('tab: complete')
   book = AddressBookService.load_data()
   print("Welcome to the assistant bot!")
+
   while True:
     user_input = input("Enter a command: ")
     command, *args = parse_input(user_input)
@@ -38,7 +53,7 @@ def main():
         print(AddressBookService.get_birthdays_for_next_week(book))
       case _:
         print(f"Invalid command. Please check out available ones: {
-            [command.value for command in Commands.__members__.values()]}")
+            Commands.all_commands()}")
 
 
 if __name__ == "__main__":

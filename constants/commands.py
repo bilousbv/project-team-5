@@ -20,3 +20,13 @@ class Commands(Enum):
       if isinstance(cmd.value, str) and command == cmd.value:
         return cmd
     return None
+
+  @classmethod
+  def all_commands(cls):
+    commands = []
+    for cmd in cls:
+      if isinstance(cmd.value, list):
+        commands.extend(cmd.value)
+      else:
+        commands.append(cmd.value)
+    return commands
