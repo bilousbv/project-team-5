@@ -33,9 +33,8 @@ class Record:
             if i.value == phone:
                 return i
 
-    def add_birthday(self, birthday):
+    def add_birthday(self, birthday: str):
         self.birthday = birthday
 
-
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, birthday: {self.birthday}"
