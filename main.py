@@ -4,15 +4,6 @@ from service.notes_service import NoteService
 
 
 def parse_input(user_input: str):
-    """
-        Parse user input into a command and its arguments.
-
-        Args:
-            user_input (str): The raw input from the user.
-
-        Returns:
-            Tuple[str, List[str]]: The command and list of arguments.
-    """
     cmd, *args = user_input.split()
     cmd = cmd.strip().lower()
     return cmd, *args

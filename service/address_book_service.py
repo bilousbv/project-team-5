@@ -6,15 +6,6 @@ from constants.filepath import ADDRESS_BOOK_FILEPATH
 
 
 def input_error(func):
-    """
-        Decorator to handle common input errors for bot commands.
-
-        Args:
-            func (Callable): The function to decorate.
-
-        Returns:
-            Callable: The wrapped function with error handling.
-    """
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
@@ -32,15 +23,6 @@ class AddressBookService:
     @staticmethod
     @input_error
     def add_contact(book: AddressBook):
-        """
-           Add a new contact or update an existing one with a phone number.
-
-           Args:
-               book (AddressBook): The address book instance.
-
-           Returns:
-               str: Success message indicating contact addition or update.
-       """
         name = input("Enter your name:")
         record = Record(name)
         phone = input("Enter your phone:")
@@ -80,16 +62,6 @@ class AddressBookService:
     @staticmethod
     @input_error
     def get_phones_for_contact(args, book: AddressBook):
-        """
-           Get the phones number of a contact.
-
-           Args:
-               args (List[str]): List containing the name.
-               book (AddressBook): The address book instance.
-
-           Returns:
-               str: The phone numbers or an error message.
-           """
         name, *_ = args
         record = book.find(name)
         if not record:
@@ -206,17 +178,11 @@ class AddressBookService:
 
     @staticmethod
     def save_data(book: AddressBook, path: str = ADDRESS_BOOK_FILEPATH):
-        """
-            Save the address book to a file.
-        """
         with open(path, "wb") as f:
             pickle.dump(book, f)
 
     @staticmethod
     def load_data(path: str = ADDRESS_BOOK_FILEPATH):
-        """
-            Load the address book from a file.
-        """
         try:
             with open(path, "rb") as f:
                 return pickle.load(f)
