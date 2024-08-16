@@ -7,44 +7,62 @@ from utils.parse_input import parse_input
 
 
 def main():
-    book = AddressBookService.load_data()
+    address_book = AddressBookService.load_data()
     notes_book = NoteService.load_data()
 
-    print("Welcome to the assistant bot!")
-    contacts_headers = [f"{Fore.LIGHTBLUE_EX}Contact Name{Fore.RESET}", f"{
-        Fore.LIGHTBLUE_EX}Phones{Fore.RESET}", f"{Fore.LIGHTBLUE_EX}Birthday{Fore.RESET}"]
-    contacts_rows = [[record.name.value, '\n'.join(
-        p.value for p in record.phones), record.birthday] for record in book.data.values()]
+    contacts_headers = [
+        f"{Fore.LIGHTBLUE_EX}Contact Name{Fore.RESET}",
+        f"{Fore.LIGHTBLUE_EX}Phones{Fore.RESET}",
+        f"{Fore.LIGHTBLUE_EX}Birthday{Fore.RESET}"
+    ]
+    contacts_rows = [
+        [record.name.value, '\n'.join(
+            p.value for p in record.phones), record.birthday]
+        for record in address_book.data.values()
+    ]
+
+    notes_headers = [
+        f"{Fore.LIGHTBLUE_EX}Title{Fore.RESET}",
+        f"{Fore.LIGHTBLUE_EX}Description{Fore.RESET}",
+        f"{Fore.LIGHTBLUE_EX}Created{Fore.RESET}"
+    ]
+    notes_rows = [
+        [note.title, note.description, note.created_at]
+        for note in notes_book.data.values()
+    ]
+
+    print(f"{Fore.LIGHTCYAN_EX}Welcome to the assistant bot!{Fore.RESET}")
     while True:
         user_input = input("Enter a command: ")
         command, *args = parse_input(user_input)
 
         match Commands.get_command(command):
             case Commands.EXIT:
-                AddressBookService.save_data(book)
+                AddressBookService.save_data(address_book)
                 NoteService.save_data(notes_book)
                 print("Good bye!")
                 break
             case Commands.HELLO:
                 print("How can I help you?")
             case Commands.ADD_CONTACT:
-                print(AddressBookService.add_contact(args, book))
+                print(AddressBookService.add_contact(args, address_book))
             case Commands.CHANGE_CONTACT:
-                print(AddressBookService.change_contact_number(args, book))
+                print(AddressBookService.change_contact_number(args, address_book))
             case Commands.PHONE:
-                print(AddressBookService.get_phones_for_contact(args, book))
+                print(AddressBookService.get_phones_for_contact(args, address_book))
             case Commands.ALL_CONTACTS:
                 print(table_printer(contacts_headers, contacts_rows))
             case Commands.ADD_BIRTHDAY:
-                print(AddressBookService.add_birthday_to_contact(args, book))
+                print(AddressBookService.add_birthday_to_contact(args, address_book))
             case Commands.SHOW_BIRTHDAY:
-                print(AddressBookService.get_birthday_for_contact(args, book))
+                print(AddressBookService.get_birthday_for_contact(
+                    args, address_book))
             case Commands.BIRTHDAYS:
-                print(AddressBookService.get_birthdays_for_next_week(book))
+                print(AddressBookService.get_birthdays_for_next_week(address_book))
             case Commands.ADD_NOTE:
                 NoteService.add_note(NoteService(), notes_book)
             case Commands.SHOW_NOTES:
-                notes_book.show_all()
+                print(table_printer(notes_headers, notes_rows))
             case Commands.FIND_NOTE:
                 print(NoteService.get_note_by_id(args, notes_book))
             case Commands.DELETE_NOTE:
