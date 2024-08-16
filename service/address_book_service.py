@@ -22,36 +22,31 @@ class AddressBookService:
     @staticmethod
     @input_error
     def add_contact(book: AddressBook):
-        name = input("Enter your name: ")
+        name = input(f"{Fore.BLUE}Enter your name: {Fore.RESET}")
         record = Record(name)
-        phone = input("Enter your phone: ")
+        phone = input(f"{Fore.BLUE}Enter your phone: {Fore.RESET}")
         try:
             record.add_phone(phone)
         except ValueError:
             return f"{Fore.RED}Wrong phone format!{Fore.RESET}"
-        date_of_birth = input("Enter your birthday: ")
         try:
-            datetime.strptime(date_of_birth, "%d.%m.%Y")
+            date_of_birth = input(
+                f"{Fore.BLUE}Enter your birthday: {Fore.RESET}")
+            # datetime.strptime(date_of_birth, "%d.%m.%Y")
             record.add_birthday(date_of_birth)
-        except ValueError:
-            return f"{Fore.RED}Wrong phone format!{Fore.RESET}"
-        # email = input("Enter your email:")   TODO change when email will be implemented
+        except ValueError as e:
+            return f"{Fore.RED}{e}{Fore.RESET}"
+        try:
+            email = input(f"{Fore.BLUE}Enter your email: {Fore.RESET}")
+            record.add_email(email)
+        except ValueError as e:
+            return f"{Fore.RED}{e}{Fore.RESET}"
         book.add_record(record)
         return f"{Fore.GREEN}Contact successfully added!{Fore.RESET}"
 
     @staticmethod
     @input_error
     def change_contact_number(args, book: AddressBook):
-        """
-            Change the phone number of an existing contact.
-
-            Args:
-                args (List[str]): List containing the name, old phone number, and new phone number.
-                book (AddressBook): The address book instance.
-
-            Returns:
-                str: Success or error message.
-        """
         name, old_phone, new_phone, *_ = args
         record = book.find(name)
         if not record:
@@ -73,16 +68,6 @@ class AddressBookService:
     @staticmethod
     @input_error
     def add_birthday_to_contact(args, book: AddressBook):
-        """
-           Add a birthday to an existing contact.
-
-           Args:
-               args (List[str]): List containing the name and birthday.
-               book (AddressBook): The address book instance.
-
-           Returns:
-               str: Success message indicating birthday addition.
-       """
         name, date_of_birth, *_ = args
         record = book.find(name)
         if not record:
@@ -91,22 +76,12 @@ class AddressBookService:
             datetime.strptime(date_of_birth, "%d.%m.%Y")
             record.add_birthday(date_of_birth)
             return f"{Fore.GREEN}Date of birth added{Fore.RESET}"
-        except ValueError:
-            return f"{Fore.RED}Wrong data format{Fore.RESET}"
+        except ValueError as e:
+            return f"{Fore.RED}{e}{Fore.RESET}"
 
     @staticmethod
     @input_error
     def get_birthday_for_contact(args, book: AddressBook):
-        """
-            Show the birthday of a contact.
-
-            Args:
-                args (List[str]): List containing the name.
-                book (AddressBook): The address book instance.
-
-            Returns:
-                str: The birthday or an error message.
-        """
         name, *_ = args
         record = book.find(name)
         if not record:
@@ -116,15 +91,6 @@ class AddressBookService:
     @staticmethod
     @input_error
     def get_birthdays_for_next_week(book: AddressBook):
-        """
-           Show upcoming birthdays.
-
-           Args:
-               book (AddressBook): The address book instance.
-
-           Returns:
-               str: List of upcoming birthdays or a message indicating none.
-       """
         today = datetime.today().date()
         upcoming_birthdays = []
         end_date = today + timedelta(days=7)
@@ -132,7 +98,7 @@ class AddressBookService:
         for record in book.data.values():
             name = record.name.value
             birthday_str = record.birthday
-            birthday = datetime.strptime(birthday_str, '%d.%m.%Y').date()
+            birthday = datetime.strptime(birthday_str, "%d.%m.%Y").date()
 
             birthday_this_year = birthday.replace(year=today.year)
 
@@ -141,29 +107,35 @@ class AddressBookService:
 
             if today <= birthday_this_year <= end_date:
                 if birthday_this_year.weekday() in (5, 6):
-                    birthday_this_year += timedelta(days=(7 -
-                                                          birthday_this_year.weekday()))
+                    birthday_this_year += timedelta(
+                        days=(7 - birthday_this_year.weekday())
+                    )
 
-                upcoming_birthdays.append({
-                    'name': name,
-                    'congratulation_date': birthday_this_year.strftime('%d.%m.%Y')
-                })
+                upcoming_birthdays.append(
+                    {
+                        "name": name,
+                        "congratulation_date": birthday_this_year.strftime("%d.%m.%Y"),
+                    }
+                )
 
         return upcoming_birthdays
 
     @staticmethod
     @input_error
-    def delete_contacts(args, book: AddressBook):
-        """
-           Deletes the existing contact
+    def add_email_to_contact(args, book: AddressBook):
+        name, email_address, *_ = args
+        record = book.find(name)
+        if not record:
+            return f"{Fore.YELLOW}No contact for such name{Fore.RESET}"
+        try:
+            record.add_email(email_address)
+            return f"{Fore.GREEN}Email added{Fore.RESET}"
+        except ValueError:
+            return f"{Fore.RED}Invalid email address{Fore.RESET}"
 
-            Args:
-                args (List[str]): List containing the name.
-                book (AddressBook): The address book instance.
-
-            Returns:
-                str: Success message or error.
-        """
+    @staticmethod
+    @input_error
+    def delete_contacts(args, book):
         name, *_ = args
         record = book.find(name)
         if not record:
@@ -171,10 +143,10 @@ class AddressBookService:
         confirmation = input(f"Are you sure that you want to delete this contact '{
                              name}'?(yes/no:").strip().lower()
         if confirmation != "yes":
-            return "Deletion canceled."
+            return f"{Fore.GREEN}Deletion canceled.{Fore.RESET}"
 
         book.remove_record(record)
-        return f"Contact '{name}' deleted."
+        return f"{Fore.GREEN}Contact '{name}' deleted.{Fore.RESET}"
 
     @staticmethod
     def save_data(book: AddressBook, path: str = ADDRESS_BOOK_FILEPATH):

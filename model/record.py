@@ -1,4 +1,7 @@
 from colorama import Fore
+
+from model.birthday import Birthday
+from model.email import Email
 from model.phone import Phone
 from model.name import Name
 
@@ -8,6 +11,7 @@ class Record:
         self.name = Name(name)
         self.phones = []
         self.birthday = None
+        self.email = None
 
     def add_phone(self, phone: str):
         try:
@@ -40,7 +44,22 @@ class Record:
                 return i
 
     def add_birthday(self, birthday: str):
-        self.birthday = birthday
+        print('add')
+        try:
+            self.birthday = Birthday(birthday)
+        except ValueError as e:
+            raise ValueError(e)
+
+    def add_email(self, email):
+        try:
+            self.email = Email(email)
+            return "Email added successfully"
+        except ValueError as e:
+            raise ValueError(f"Error adding email: {str(e)}")
 
     def __str__(self) -> str:
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, birthday: {self.birthday}"
+        email = self.email.value if self.email else "No email"
+        return (f"Contact name: {self.name.value},"
+                f" phones: {'; '.join(p.value for p in self.phones)},"
+                f" Email: {email},"
+                f" Birthday: {self.birthday}")

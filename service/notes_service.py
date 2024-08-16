@@ -14,8 +14,7 @@ init()
 class NoteService:
     def add_field(self, note: Note, field_name: str):
         try:
-            user_input = str(input(f'{Fore.BLUE}Enter the note {field_name}(q - for quit):{Style.RESET_ALL}'))
-            print(user_input.lower(),  QUIT_COMMAND)
+            user_input = str(input(f'{Fore.BLUE}Enter the note {field_name}(q - for quit): {Style.RESET_ALL}'))
             if user_input.lower() is QUIT_COMMAND:
                 return None
 
@@ -36,7 +35,6 @@ class NoteService:
 
             field = self.add_field(note, field_index)
             index += 1
-            print(field)
 
             # TODO Remove index condition for tags endless input
             if field is None or index >= len(FIELDS):
