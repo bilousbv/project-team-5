@@ -4,7 +4,7 @@ from enum import Enum
 class Commands(Enum):
     EXIT = ['exit', 'close']
     HELLO = 'hello'
-    ALL_CONTACTS = 'all'
+    ALL_CONTACTS = 'all-contacts'
     ADD_CONTACT = 'add-contact'
     CHANGE_CONTACT = 'change-contact'
     PHONE = 'phone'
@@ -24,3 +24,22 @@ class Commands(Enum):
             if isinstance(cmd.value, str) and command == cmd.value:
                 return cmd
         return None
+
+    @classmethod
+    def all_commands(cls):
+        commands = []
+        for cmd in cls:
+            if isinstance(cmd.value, list):
+                commands.extend(cmd.value)
+            else:
+                commands.append(cmd.value)
+        return commands
+
+    @staticmethod
+    def completer(text, state):
+        options = [command for command in Commands.all_commands()
+                   if command.startswith(text)]
+        if state < len(options):
+            return options[state]
+        else:
+            return None

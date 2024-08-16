@@ -1,12 +1,19 @@
+import readline
 from colorama import Fore
 from service.address_book_service import AddressBookService
 from constants.commands import Commands
 from service.notes_service import NoteService
-from utils.table_printer import table_printer
 from utils.parse_input import parse_input
+from utils.table_printer import table_printer
 
 
 def main():
+    readline.set_completer(Commands.completer)
+    if readline.__doc__ and 'libedit' in readline.__doc__:
+        readline.parse_and_bind("bind ^I rl_complete")
+    else:
+        readline.parse_and_bind("tab: complete")
+
     address_book = AddressBookService.load_data()
     notes_book = NoteService.load_data()
 
@@ -69,7 +76,7 @@ def main():
                 print(NoteService.delete_note(args, notes_book))
             case _:
                 print(f"Invalid command. Please check out available ones: {
-                    [command.value for command in Commands.__members__.values()]}")
+                    Commands.all_commands()}")
 
 
 if __name__ == "__main__":
