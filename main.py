@@ -45,7 +45,7 @@ def main():
             case Commands.HELLO:
                 print("How can I help you?")
             case Commands.ADD_CONTACT:
-                print(AddressBookService.add_contact(args, address_book))
+                print(AddressBookService.add_contact(address_book))
             case Commands.CHANGE_CONTACT:
                 print(AddressBookService.change_contact_number(args, address_book))
             case Commands.PHONE:
