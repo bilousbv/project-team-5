@@ -9,6 +9,7 @@ class Note:
         self.id = note_id
         self.title = None
         self.description = None
+        self.tags = []
         self.created_at = datetime.now().strftime('%m/%d/%Y, %H:%M')
 
     def __getitem__(self, key: str):
@@ -26,4 +27,5 @@ class Note:
         return self.title is not None and self.description is not None
 
     def __str__(self) -> str:
-        return f"Id: {self.id}; Title: {self.title}; Description: {self.description}; CreatedAt: {self.created_at}"
+        return (f"Id: {self.id}; Title: {self.title}; Description: {self.description}; CreatedAt: {self.created_at}, "
+                f"Tags: {'; '.join(t.value for t in self.tags)}")
