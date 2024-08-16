@@ -4,7 +4,7 @@ from enum import Enum
 class Commands(Enum):
     EXIT = ['exit', 'close']
     HELLO = 'hello'
-    ALL_CONTACTS = 'all'
+    ALL_CONTACTS = 'all-contacts'
     ADD_CONTACT = 'add-contact'
     CHANGE_CONTACT = 'change-contact'
     PHONE = 'phone'
