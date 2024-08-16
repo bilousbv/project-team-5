@@ -1,18 +1,36 @@
+import readline
+from colorama import Fore
 from service.address_book_service import AddressBookService
 from constants.commands import Commands
 from service.notes_service import NoteService
-
-
-def parse_input(user_input: str):
-    cmd, *args = user_input.split()
-    cmd = cmd.strip().lower()
-    return cmd, *args
+from utils.parse_input import parse_input
+from utils.table_printer import table_printer
 
 
 def main():
+    readline.set_completer(Commands.completer)
+    if readline.__doc__ and 'libedit' in readline.__doc__:
+        readline.parse_and_bind("bind ^I rl_complete")
+    else:
+        readline.parse_and_bind("tab: complete")
+
     address_book = AddressBookService.load_data()
     notes_book = NoteService.load_data()
-    print("Welcome to the assistant bot!")
+
+    contacts_headers = [
+        f"{Fore.LIGHTBLUE_EX}Contact Name{Fore.RESET}",
+        f"{Fore.LIGHTBLUE_EX}Phones{Fore.RESET}",
+        f"{Fore.LIGHTBLUE_EX}Birthday{Fore.RESET}",
+        f"{Fore.LIGHTBLUE_EX}Email{Fore.RESET}"
+    ]
+
+    notes_headers = [
+        f"{Fore.LIGHTBLUE_EX}Title{Fore.RESET}",
+        f"{Fore.LIGHTBLUE_EX}Description{Fore.RESET}",
+        f"{Fore.LIGHTBLUE_EX}Created{Fore.RESET}"
+    ]
+
+    print(f"{Fore.LIGHTCYAN_EX}Welcome to the assistant bot!{Fore.RESET}")
     while True:
         user_input = input("Enter a command: ")
         command, *args = parse_input(user_input)
@@ -32,11 +50,17 @@ def main():
             case Commands.PHONE:
                 print(AddressBookService.get_phones_for_contact(args, address_book))
             case Commands.ALL_CONTACTS:
-                address_book.show_all()
+                contacts_rows = [
+                    [record.name.value, '\n'.join(
+                        p.value for p in record.phones), record.birthday, record.email]
+                    for record in address_book.data.values()
+                ]
+                print(table_printer(contacts_headers, contacts_rows))
             case Commands.ADD_BIRTHDAY:
                 print(AddressBookService.add_birthday_to_contact(args, address_book))
             case Commands.SHOW_BIRTHDAY:
-                print(AddressBookService.get_birthday_for_contact(args, address_book))
+                print(AddressBookService.get_birthday_for_contact(
+                    args, address_book))
             case Commands.BIRTHDAYS:
                 print(AddressBookService.get_birthdays_for_next_week(address_book))
             case Commands.ADD_EMAIL:
@@ -44,14 +68,18 @@ def main():
             case Commands.ADD_NOTE:
                 NoteService.add_note(NoteService(), notes_book)
             case Commands.SHOW_NOTES:
-                notes_book.show_all()
+                notes_rows = [
+                    [note.title, note.description, note.created_at]
+                    for note in notes_book.data.values()
+                ]
+                print(table_printer(notes_headers, notes_rows))
             case Commands.FIND_NOTE:
                 print(NoteService.get_note_by_id(args, notes_book))
             case Commands.DELETE_NOTE:
                 print(NoteService.delete_note(args, notes_book))
             case _:
-                print(f"Invalid command. Please check out available ones:"
-                      f" {[command.value for command in Commands.__members__.values()]}")
+                print(f"Invalid command. Please check out available ones: {
+                    Commands.all_commands()}")
 
 
 if __name__ == "__main__":
