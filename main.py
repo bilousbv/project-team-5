@@ -1,5 +1,5 @@
 import readline
-
+from colorama import Fore
 from service.address_book_service import AddressBookService
 from constants.commands import Commands
 from service.notes_service import NoteService
@@ -22,8 +22,7 @@ def main():
 
     address_book = AddressBookService.load_data()
     notes_book = NoteService.load_data()
-    print("Welcome to the assistant bot!")
-
+    print(f"{Fore.LIGHTCYAN_EX}Welcome to the assistant bot!{Fore.RESET}")
     while True:
         user_input = input("Enter a command: ")
         command, *args = parse_input(user_input)
