@@ -1,4 +1,6 @@
 from datetime import datetime
+from colorama import Fore
+
 
 DATE_FORMAT = '%d.%m.%Y'
 
@@ -8,4 +10,5 @@ class Birthday:
         try:
             self.value = datetime.strptime(value, DATE_FORMAT).date()
         except ValueError:
-            raise ValueError("Invalid date format. Use DD.MM.YYYY")
+            raise ValueError(
+                f"{Fore.RED}Invalid date format. Use DD.MM.YYYY{Fore.RESET}")
