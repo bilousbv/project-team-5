@@ -5,6 +5,7 @@ from constants.filepath import NOTES_BOOK_FILEPATH
 from model.note import Note
 from model.notes_book import NotesBook
 from service.address_book_service import input_error
+from model.tag import Tag
 
 FIELDS = ['title', 'description']
 QUIT_COMMAND = 'q'
@@ -38,6 +39,17 @@ class NoteService:
 
             # TODO Remove index condition for tags endless input
             if field is None or index >= len(FIELDS):
+
+                while True:
+                    tag = str(input(f'{Fore.BLUE}Enter the note tag(q - for quit):{Style.RESET_ALL}'))
+                    if tag.lower() == QUIT_COMMAND:
+                        break
+                    try:
+                        self.add_tag(tag, note)
+                        print(f'{Fore.GREEN}Tag was added successfully!{Style.RESET_ALL}')
+                    except ValueError as e:
+                        print(e)
+
                 if note.is_valid():
                     note_book.add_note(note)
                     print(f'{Fore.GREEN}Note was saved successfully!{Style.RESET_ALL}')
@@ -46,6 +58,16 @@ class NoteService:
                     del note
                     print(f'{Fore.RED}Note didn\'t saved. Title or Description is missing!{Style.RESET_ALL}')
                     break
+
+    @staticmethod
+    def add_tag(tag: str, note: Note):
+        if len(tag) == 0:
+            raise ValueError(f'{Fore.RED}Tag should contain at least one character!{Style.RESET_ALL}')
+        for note_tag in note.tags:
+            if note_tag.value == tag:
+                raise ValueError(f'{Fore.RED}Note already contains this tag{Style.RESET_ALL}')
+
+        note.tags.append(Tag(tag))
 
     @staticmethod
     @input_error
