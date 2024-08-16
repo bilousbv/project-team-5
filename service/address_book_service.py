@@ -24,18 +24,18 @@ class AddressBookService:
     def add_contact(book: AddressBook):
         name = input(f"{Fore.BLUE}Enter your name: {Fore.RESET}")
         record = Record(name)
-        phone = input(f"{Fore.BLUE}Enter your phone: {Fore.RESET}")
-        try:
-            record.add_phone(phone)
-        except ValueError:
-            return f"{Fore.RED}Wrong phone format!{Fore.RESET}"
-        try:
+
+        while True:
+            phone = input(f"{Fore.BLUE}Enter your phone: {Fore.RESET}")
+            is_added = record.add_phone(phone)
+            if is_added:
+                break
+        while True:
             date_of_birth = input(
                 f"{Fore.BLUE}Enter your birthday: {Fore.RESET}")
-            # datetime.strptime(date_of_birth, "%d.%m.%Y")
-            record.add_birthday(date_of_birth)
-        except ValueError as e:
-            return f"{Fore.RED}{e}{Fore.RESET}"
+            is_added = record.add_birthday(date_of_birth)
+            if is_added:
+                break
         try:
             email = input(f"{Fore.BLUE}Enter your email: {Fore.RESET}")
             record.add_email(email)
