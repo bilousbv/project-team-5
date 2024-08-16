@@ -30,7 +30,8 @@ class AddressBookService:
         except ValueError:
             return f"{Fore.RED}Wrong phone format!{Fore.RESET}"
         try:
-            date_of_birth = input(f"{Fore.BLUE}Enter your birthday: {Fore.RESET}")
+            date_of_birth = input(
+                f"{Fore.BLUE}Enter your birthday: {Fore.RESET}")
             # datetime.strptime(date_of_birth, "%d.%m.%Y")
             record.add_birthday(date_of_birth)
         except ValueError as e:
@@ -134,7 +135,7 @@ class AddressBookService:
 
     @staticmethod
     @input_error
-    def delete_contacts(args, book: ADDRESS_BOOK_FILEPATH):
+    def delete_contacts(args, book):
         name, *_ = args
         record = book.find(name)
         if not record:

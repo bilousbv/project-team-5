@@ -6,8 +6,6 @@ DATE_FORMAT = '%d.%m.%Y'
 class Birthday:
     def __init__(self, value):
         try:
-            birthday = datetime.strptime(value, DATE_FORMAT).date()
-            self.birthday = birthday
-            super().__init__(birthday)
+            self.value = datetime.strptime(value, DATE_FORMAT).date()
         except ValueError:
             raise ValueError("Invalid date format. Use DD.MM.YYYY")

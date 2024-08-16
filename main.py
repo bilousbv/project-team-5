@@ -52,10 +52,11 @@ def main():
             case Commands.ALL_CONTACTS:
                 contacts_rows = [
                     [record.name.value, '\n'.join(
-                        p.value for p in record.phones), record.birthday, record.email]
+                        p.value for p in record.phones), record.birthday.value, record.email]
                     for record in address_book.data.values()
                 ]
-                print(table_printer(contacts_headers, contacts_rows))
+                print(table_printer(contacts_headers, contacts_rows)
+                      if contacts_rows else f"{Fore.RED}No contacts{Fore.RESET}")
             case Commands.ADD_BIRTHDAY:
                 print(AddressBookService.add_birthday_to_contact(args, address_book))
             case Commands.SHOW_BIRTHDAY:
@@ -72,7 +73,8 @@ def main():
                     [note.title, note.description, note.created_at]
                     for note in notes_book.data.values()
                 ]
-                print(table_printer(notes_headers, notes_rows))
+                print(table_printer(notes_headers, notes_rows)
+                      if notes_rows else f"{Fore.RED}No notes{Fore.RESET}")
             case Commands.FIND_NOTE:
                 print(NoteService.get_note_by_id(args, notes_book))
             case Commands.DELETE_NOTE:
