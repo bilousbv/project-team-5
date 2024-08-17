@@ -83,6 +83,8 @@ def main():
                       if notes_rows else f"{Fore.RED}No notes{Fore.RESET}")
             case Commands.DELETE_NOTE:
                 print(NoteService.delete_note(args, notes_book))
+            case Commands.HELP:
+                print(AddressBookService.display_help())
             case _:
                 print(f"Invalid command. Please check out available ones: {
                     Commands.all_commands()}")
