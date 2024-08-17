@@ -74,7 +74,13 @@ def main():
                 print(table_printer(notes_headers, notes_rows)
                       if notes_rows else f"{Fore.RED}No notes{Fore.RESET}")
             case Commands.FIND_NOTE:
-                print(NoteService.get_note_by_id(args, notes_book))
+                notes = NoteService.get_notes_by_title(args, notes_book)
+                notes_rows = [
+                    [note.title, note.description, note.created_at]
+                    for note in notes
+                ]
+                print(table_printer(notes_headers, notes_rows)
+                      if notes_rows else f"{Fore.RED}No notes{Fore.RESET}")
             case Commands.DELETE_NOTE:
                 print(NoteService.delete_note(args, notes_book))
             case _:
