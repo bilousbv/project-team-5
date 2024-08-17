@@ -106,3 +106,19 @@ class NoteService:
                 return pickle.load(f)
         except FileNotFoundError:
             return NotesBook()
+
+    @staticmethod
+    def find_notes_by_tag(args, book: NotesBook):
+        tag_name, *_ = args
+        notes_with_tag = []
+        for note in book.values():
+            tags = note.tags
+            for tag in tags:
+                if tag.value == tag_name:
+                    notes_with_tag.append(str(note))
+
+        if len(notes_with_tag) == 0:
+            print("There is no Notes with such tag")
+        else:
+            for note in notes_with_tag:
+                print(note)
