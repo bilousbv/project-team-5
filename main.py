@@ -79,6 +79,8 @@ def main():
                 print(NoteService.get_note_by_id(args, notes_book))
             case Commands.DELETE_NOTE:
                 print(NoteService.delete_note(args, notes_book))
+            case Commands.HELP:
+                print(AddressBookService.display_help())
             case _:
                 print(f"Invalid command. Please check out available ones: {
                     Commands.all_commands()}")
