@@ -1,4 +1,5 @@
-import readline
+from prompt_toolkit import prompt
+from prompt_toolkit.completion import WordCompleter
 from colorama import Fore
 from service.address_book_service import AddressBookService
 from constants.commands import Commands
@@ -8,11 +9,8 @@ from utils.table_printer import table_printer
 
 
 def main():
-    readline.set_completer(Commands.completer)
-    if readline.__doc__ and 'libedit' in readline.__doc__:
-        readline.parse_and_bind("bind ^I rl_complete")
-    else:
-        readline.parse_and_bind("tab: complete")
+    commands_completer = WordCompleter(
+        Commands.all_commands(), ignore_case=True)
 
     address_book = AddressBookService.load_data()
     notes_book = NoteService.load_data()
@@ -32,7 +30,7 @@ def main():
 
     print(f"{Fore.LIGHTCYAN_EX}Welcome to the assistant bot!{Fore.RESET}")
     while True:
-        user_input = input("Enter a command: ")
+        user_input = prompt("Enter a command: ", completer=commands_completer)
         command, *args = parse_input(user_input)
 
         match Commands.get_command(command):
@@ -76,9 +74,17 @@ def main():
                 print(table_printer(notes_headers, notes_rows)
                       if notes_rows else f"{Fore.RED}No notes{Fore.RESET}")
             case Commands.FIND_NOTE:
-                print(NoteService.get_note_by_id(args, notes_book))
+                notes = NoteService.get_notes_by_title(args, notes_book)
+                notes_rows = [
+                    [note.title, note.description, note.created_at]
+                    for note in notes
+                ]
+                print(table_printer(notes_headers, notes_rows)
+                      if notes_rows else f"{Fore.RED}No notes{Fore.RESET}")
             case Commands.DELETE_NOTE:
                 print(NoteService.delete_note(args, notes_book))
+            case Commands.HELP:
+                print(AddressBookService.display_help())
             case Commands.FIND_NOTES_BY_TAG:
                 NoteService.find_notes_by_tag(args, notes_book)
             case _:
