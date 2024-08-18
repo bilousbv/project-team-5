@@ -125,16 +125,14 @@ class NoteService:
 
     @staticmethod
     def find_notes_by_tag(args, book: NotesBook):
-        tag_name, *_ = args
         notes_with_tag = []
+        if len(args) < 1:
+            return notes_with_tag
+        tag_name, *_ = args
         for note in book.values():
             tags = note.tags
             for tag in tags:
                 if tag.value == tag_name:
-                    notes_with_tag.append(str(note))
+                    notes_with_tag.append(note)
 
-        if len(notes_with_tag) == 0:
-            print("There is no Notes with such tag")
-        else:
-            for note in notes_with_tag:
-                print(note)
+        return notes_with_tag
