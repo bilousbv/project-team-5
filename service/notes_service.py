@@ -122,3 +122,17 @@ class NoteService:
                 return pickle.load(f)
         except FileNotFoundError:
             return NotesBook()
+
+    @staticmethod
+    def find_notes_by_tag(args, book: NotesBook):
+        notes_with_tag = []
+        if len(args) < 1:
+            return notes_with_tag
+        tag_name, *_ = args
+        for note in book.values():
+            tags = note.tags
+            for tag in tags:
+                if tag.value == tag_name:
+                    notes_with_tag.append(note)
+
+        return notes_with_tag

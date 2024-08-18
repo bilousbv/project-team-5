@@ -17,6 +17,7 @@ class Commands(Enum):
     SHOW_NOTES = "all-notes"
     FIND_NOTE = "find-note"
     DELETE_NOTE = "delete-note"
+    FIND_NOTES_BY_TAG = "find-notes-with-tag"
 
     @classmethod
     def get_command(cls, command: str):

@@ -25,7 +25,8 @@ def main():
     notes_headers = [
         f"{Fore.LIGHTBLUE_EX}Title{Fore.RESET}",
         f"{Fore.LIGHTBLUE_EX}Description{Fore.RESET}",
-        f"{Fore.LIGHTBLUE_EX}Created{Fore.RESET}"
+        f"{Fore.LIGHTBLUE_EX}Created{Fore.RESET}",
+        f"{Fore.LIGHTBLUE_EX}Tags{Fore.RESET}"
     ]
 
     print(f"{Fore.LIGHTCYAN_EX}Welcome to the assistant bot!{Fore.RESET}")
@@ -68,7 +69,8 @@ def main():
                 NoteService.add_note(NoteService(), notes_book)
             case Commands.SHOW_NOTES:
                 notes_rows = [
-                    [note.title, note.description, note.created_at]
+                    [note.title, note.description, note.created_at,
+                     '\n'.join(tag.value for tag in note.tags)]
                     for note in notes_book.data.values()
                 ]
                 print(table_printer(notes_headers, notes_rows)
@@ -76,7 +78,8 @@ def main():
             case Commands.FIND_NOTE:
                 notes = NoteService.get_notes_by_title(args, notes_book)
                 notes_rows = [
-                    [note.title, note.description, note.created_at]
+                    [note.title, note.description, note.created_at,
+                     '\n'.join(tag.value for tag in note.tags)]
                     for note in notes
                 ]
                 print(table_printer(notes_headers, notes_rows)
@@ -85,6 +88,15 @@ def main():
                 print(NoteService.delete_note(args, notes_book))
             case Commands.HELP:
                 print(AddressBookService.display_help())
+            case Commands.FIND_NOTES_BY_TAG:
+                notes = NoteService.find_notes_by_tag(args, notes_book)
+                notes_rows = [
+                    [note.title, note.description, note.created_at,
+                     '\n'.join(tag.value for tag in note.tags)]
+                    for note in notes
+                ]
+                print(table_printer(notes_headers, notes_rows)
+                      if notes_rows else f"{Fore.RED}No notes{Fore.RESET}")
             case _:
                 print(f"Invalid command. Please check out available ones: {
                     Commands.all_commands()}")
