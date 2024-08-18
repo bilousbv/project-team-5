@@ -1,5 +1,5 @@
 import re
-from model.field import Field
+from assistant_bot.model.field import Field
 
 
 class Email(Field):

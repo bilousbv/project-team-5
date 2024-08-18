@@ -1,11 +1,11 @@
 import pickle
 from colorama import init, Fore, Style
 
-from constants.filepath import NOTES_BOOK_FILEPATH
-from model.note import Note
-from model.notes_book import NotesBook
-from service.address_book_service import input_error
-from model.tag import Tag
+from assistant_bot.constants.filepath import NOTES_BOOK_FILEPATH
+from assistant_bot.model.note import Note
+from assistant_bot.model.notes_book import NotesBook
+from assistant_bot.service.address_book_service import input_error
+from assistant_bot.model.tag import Tag
 
 FIELDS = ['title', 'description']
 QUIT_COMMAND = 'q'

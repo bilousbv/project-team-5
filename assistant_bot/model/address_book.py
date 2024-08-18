@@ -1,6 +1,7 @@
 from collections import UserDict
-from model.record import Record
 from colorama import init, Fore, Style
+
+from assistant_bot.model.record import Record
 
 init()
 
@@ -18,7 +19,7 @@ class AddressBook(UserDict):
                 return v
 
     def show_all(self):
-        if len(self.data.values()) is 0:
+        if len(self.data.values()) == 0:
             print(f'{Fore.RED}There are no contacts saved{Style.RESET_ALL}')
 
         for record in self.data.values():

@@ -1,9 +1,10 @@
 import pickle
 from colorama import Fore
-from model.record import Record
-from model.address_book import AddressBook
 from datetime import datetime, timedelta
-from constants.filepath import ADDRESS_BOOK_FILEPATH
+
+from assistant_bot.model.record import Record
+from assistant_bot.model.address_book import AddressBook
+from assistant_bot.constants.filepath import ADDRESS_BOOK_FILEPATH
 
 
 def input_error(func):

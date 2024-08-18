@@ -1,8 +1,8 @@
 from colorama import Fore
-from model.birthday import Birthday
-from model.email import Email
-from model.phone import Phone
-from model.name import Name
+from assistant_bot.model.birthday import Birthday
+from assistant_bot.model.email import Email
+from assistant_bot.model.phone import Phone
+from assistant_bot.model.name import Name
 
 
 class Record:

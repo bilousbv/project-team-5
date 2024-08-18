@@ -1,7 +1,7 @@
 import re
 from collections import UserDict
 from colorama import init, Fore, Style
-from model.note import Note
+from assistant_bot.model.note import Note
 
 init()
 
@@ -14,13 +14,13 @@ class NotesBook(UserDict):
         self.data.update({note.id: note})
 
     def get_next_id(self):
-        if len(self.data) is 0:
+        if len(self.data) == 0:
             return 1
         else:
             return max(self.data, key=lambda x: x) + 1
 
     def show_all(self):
-        if len(self.data.values()) is 0:
+        if len(self.data.values()) == 0:
             print(f'{Fore.RED}There are no notes saved{Style.RESET_ALL}')
 
         for note in self.data.values():
