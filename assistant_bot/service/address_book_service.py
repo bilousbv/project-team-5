@@ -96,15 +96,12 @@ class AddressBookService:
         upcoming_birthdays = []
         end_date = today + timedelta(days=7)
 
-        for record in book.data.values():
-            name = record.name.value
-            birthday_str = record.birthday
-            birthday = datetime.strptime(birthday_str, "%d.%m.%Y").date()
-
-            birthday_this_year = birthday.replace(year=today.year)
+        for name, record in book.data.items():
+            birthday_this_year = record.birthday.value.replace(year=today.year)
 
             if birthday_this_year < today:
-                birthday_this_year = birthday.replace(year=today.year + 1)
+                birthday_this_year = record.birthday.value.replace(
+                    year=today.year + 1)
 
             if today <= birthday_this_year <= end_date:
                 if birthday_this_year.weekday() in (5, 6):
@@ -115,7 +112,7 @@ class AddressBookService:
                 upcoming_birthdays.append(
                     {
                         "name": name,
-                        "congratulation_date": birthday_this_year.strftime("%d.%m.%Y"),
+                        "congratulation_date": datetime.strftime(birthday_this_year, "%d.%m.%Y"),
                     }
                 )
 
