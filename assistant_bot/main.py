@@ -1,4 +1,5 @@
-import readline
+from prompt_toolkit import prompt
+from prompt_toolkit.completion import WordCompleter
 from colorama import Fore
 from assistant_bot.service.address_book_service import AddressBookService
 from assistant_bot.constants.commands import Commands
@@ -8,11 +9,8 @@ from assistant_bot.utils.table_printer import table_printer
 
 
 def main():
-    readline.set_completer(Commands.completer)
-    if readline.__doc__ and 'libedit' in readline.__doc__:
-        readline.parse_and_bind("bind ^I rl_complete")
-    else:
-        readline.parse_and_bind("tab: complete")
+    commands_completer = WordCompleter(
+        Commands.all_commands(), ignore_case=True)
 
     address_book = AddressBookService.load_data()
     notes_book = NoteService.load_data()
@@ -27,13 +25,21 @@ def main():
     notes_headers = [
         f"{Fore.LIGHTBLUE_EX}Title{Fore.RESET}",
         f"{Fore.LIGHTBLUE_EX}Description{Fore.RESET}",
-        f"{Fore.LIGHTBLUE_EX}Created{Fore.RESET}"
+        f"{Fore.LIGHTBLUE_EX}Created{Fore.RESET}",
+        f"{Fore.LIGHTBLUE_EX}Tags{Fore.RESET}"
     ]
 
-    print(f"{Fore.LIGHTCYAN_EX}Welcome to the assistant bot!{Fore.RESET}")
+    print(f"{Fore.LIGHTCYAN_EX}"
+          "       _                  _         _                     _       _               _\n"
+          "      / \     ___   ___  (_)  ___  | |_    __ _   _ __   | |_    | |__     ___   | |_\n"
+          "     / _ \   / __| / __| | | / __| | __|  / _` | | '_ \  | __|   | '_ \   / _ \  | __|\n"
+          "    / ___ \  \__ \ \__ \ | | \__ \ | |_  | (_| | | | | | | |_    | |_) | | (_) | | |_\n"
+          "   /_/   \_\ |___/ |___/ |_| |___/  \__|  \__,_| |_| |_|  \__|   |_.__/   \___/   \__|\n"
+          f"{Fore.RESET}")
+
     while True:
         try:
-            user_input = input("Enter a command: ")
+            user_input = prompt("Enter a command: ", completer=commands_completer)
             command, *args = parse_input(user_input)
         except (KeyboardInterrupt, ValueError):
             print('\n')
@@ -43,6 +49,7 @@ def main():
             NoteService.save_data(notes_book)
             print("\nGood bye!")
             break  # Control-D pressed. Exit the loop.
+
         match Commands.get_command(command):
             case Commands.EXIT:
                 AddressBookService.save_data(address_book)
@@ -78,15 +85,34 @@ def main():
                 NoteService.add_note(NoteService(), notes_book)
             case Commands.SHOW_NOTES:
                 notes_rows = [
-                    [note.title, note.description, note.created_at]
+                    [note.title, note.description, note.created_at,
+                     '\n'.join(tag.value for tag in note.tags)]
                     for note in notes_book.data.values()
                 ]
                 print(table_printer(notes_headers, notes_rows)
                       if notes_rows else f"{Fore.RED}No notes{Fore.RESET}")
             case Commands.FIND_NOTE:
-                print(NoteService.get_note_by_id(args, notes_book))
+                notes = NoteService.get_notes_by_title(args, notes_book)
+                notes_rows = [
+                    [note.title, note.description, note.created_at,
+                     '\n'.join(tag.value for tag in note.tags)]
+                    for note in notes
+                ]
+                print(table_printer(notes_headers, notes_rows)
+                      if notes_rows else f"{Fore.RED}No notes{Fore.RESET}")
             case Commands.DELETE_NOTE:
                 print(NoteService.delete_note(args, notes_book))
+            case Commands.HELP:
+                print(AddressBookService.display_help())
+            case Commands.FIND_NOTES_BY_TAG:
+                notes = NoteService.find_notes_by_tag(args, notes_book)
+                notes_rows = [
+                    [note.title, note.description, note.created_at,
+                     '\n'.join(tag.value for tag in note.tags)]
+                    for note in notes
+                ]
+                print(table_printer(notes_headers, notes_rows)
+                      if notes_rows else f"{Fore.RED}No notes{Fore.RESET}")
             case _:
                 print(f"Invalid command. Please check out available ones: {
                     Commands.all_commands()}")

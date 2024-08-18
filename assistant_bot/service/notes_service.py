@@ -15,7 +15,8 @@ init()
 class NoteService:
     def add_field(self, note: Note, field_name: str):
         try:
-            user_input = str(input(f'{Fore.BLUE}Enter the note {field_name}(q - for quit): {Style.RESET_ALL}'))
+            user_input = str(input(f'{Fore.BLUE}Enter the note {
+                             field_name}(q - for quit): {Style.RESET_ALL}'))
             if user_input.lower() is QUIT_COMMAND:
                 return None
 
@@ -41,31 +42,37 @@ class NoteService:
             if field is None or index >= len(FIELDS):
 
                 while True:
-                    tag = str(input(f'{Fore.BLUE}Enter the note tag(q - for quit):{Style.RESET_ALL}'))
+                    tag = str(
+                        input(f'{Fore.BLUE}Enter the note tag(q - for quit):{Style.RESET_ALL}'))
                     if tag.lower() == QUIT_COMMAND:
                         break
                     try:
                         self.add_tag(tag, note)
-                        print(f'{Fore.GREEN}Tag was added successfully!{Style.RESET_ALL}')
+                        print(f'{Fore.GREEN}Tag was added successfully!{
+                              Style.RESET_ALL}')
                     except ValueError as e:
                         print(e)
 
                 if note.is_valid():
                     note_book.add_note(note)
-                    print(f'{Fore.GREEN}Note was saved successfully!{Style.RESET_ALL}')
+                    print(f'{Fore.GREEN}Note was saved successfully!{
+                          Style.RESET_ALL}')
                     break
                 else:
                     del note
-                    print(f'{Fore.RED}Note didn\'t saved. Title or Description is missing!{Style.RESET_ALL}')
+                    print(f'{Fore.RED}Note didn\'t saved. Title or Description is missing!{
+                          Style.RESET_ALL}')
                     break
 
     @staticmethod
     def add_tag(tag: str, note: Note):
         if len(tag) == 0:
-            raise ValueError(f'{Fore.RED}Tag should contain at least one character!{Style.RESET_ALL}')
+            raise ValueError(f'{Fore.RED}Tag should contain at least one character!{
+                             Style.RESET_ALL}')
         for note_tag in note.tags:
             if note_tag.value == tag:
-                raise ValueError(f'{Fore.RED}Note already contains this tag{Style.RESET_ALL}')
+                raise ValueError(f'{Fore.RED}Note already contains this tag{
+                                 Style.RESET_ALL}')
 
         note.tags.append(Tag(tag))
 
@@ -78,6 +85,15 @@ class NoteService:
             return f"{Fore.RED}No note for such id{Style.RESET_ALL}"
 
         return note
+
+    @input_error
+    def get_notes_by_title(args, book: NotesBook):
+        title, *_ = args
+        notes = book.find_by_title(title)
+        if not notes:
+            return f"{Fore.RED}No note for such title{Style.RESET_ALL}"
+        if len(notes) >= 1:
+            return notes
 
     @staticmethod
     @input_error
@@ -106,3 +122,17 @@ class NoteService:
                 return pickle.load(f)
         except FileNotFoundError:
             return NotesBook()
+
+    @staticmethod
+    def find_notes_by_tag(args, book: NotesBook):
+        notes_with_tag = []
+        if len(args) < 1:
+            return notes_with_tag
+        tag_name, *_ = args
+        for note in book.values():
+            tags = note.tags
+            for tag in tags:
+                if tag.value == tag_name:
+                    notes_with_tag.append(note)
+
+        return notes_with_tag

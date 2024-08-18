@@ -150,6 +150,28 @@ class AddressBookService:
         return f"{Fore.GREEN}Contact '{name}' deleted.{Fore.RESET}"
 
     @staticmethod
+    def display_help():
+        help_text = """
+        Available commands:
+        - hello: Greet the bot.
+        - add-contact <name> <phone>: Add a new contact with a phone number.
+        - change-contact <name> <old_phone> <new_phone>: Change the phone number of a contact.
+        - phone <name>: Get the phone numbers of a contact.
+        - all-contacts: Show all contacts.
+        - add-birthday <name> <date_of_birth>: Add a birthday to a contact.
+        - add-email <name> <email_address>: Add an email to a contact.
+        - show-birthday <name>: Show the birthday of a contact.
+        - birthdays: Show all birthdays coming up in the next week.
+        - add-note <note>: Add a note.
+        - all-notes: Show all notes.
+        - find-note <search_term>: Find a note by content.
+        - delete-note <note>: Delete a specific note.
+        - help: Show this help message.
+        - close/exit: Save the address book and exit.
+        """
+        return help_text
+
+    @staticmethod
     def save_data(book: AddressBook, path: str = ADDRESS_BOOK_FILEPATH):
         with open(path, "wb") as f:
             pickle.dump(book, f)

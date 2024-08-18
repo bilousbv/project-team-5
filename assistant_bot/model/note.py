@@ -19,9 +19,11 @@ class Note:
         if isinstance(value, str) and len(f'{value}') is not 0:
             self.__dict__[key] = value
         elif len(f'{value}') > 120:
-            raise ValueError(f'{Fore.RED}{key.title()} should be less than 120 characters!{Style.RESET_ALL}')
+            raise ValueError(f'{Fore.RED}{key.title()} should be less than 120 characters!{
+                             Style.RESET_ALL}')
         else:
-            raise ValueError(f'{Fore.RED}{key.title()} should contain at least one character!{Style.RESET_ALL}')
+            raise ValueError(f'{Fore.RED}{key.title()} should contain at least one character!{
+                             Style.RESET_ALL}')
 
     def is_valid(self):
         return self.title is not None and self.description is not None

@@ -1,3 +1,4 @@
+import re
 from collections import UserDict
 from colorama import init, Fore, Style
 from assistant_bot.model.note import Note
@@ -29,6 +30,14 @@ class NotesBook(UserDict):
         for k, v in self.data.items():
             if k == note_id:
                 return v
+
+    def find_by_title(self, input: str) -> list[Note]:
+        matches = []
+        pattern = re.compile(input, re.IGNORECASE)
+        for note in self.data.values():
+            if re.search(pattern, note.title):
+                matches.append(note)
+        return matches if matches else None
 
     def remove_note(self, note: Note):
         del self.data[note.id]
