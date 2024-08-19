@@ -39,7 +39,8 @@ def main():
 
     while True:
         try:
-            user_input = prompt("Enter a command: ", completer=commands_completer)
+            user_input = prompt("Enter a command: ",
+                                completer=commands_completer)
             command, *args = parse_input(user_input)
         except (KeyboardInterrupt, ValueError):
             print('\n')
@@ -78,7 +79,11 @@ def main():
                 print(AddressBookService.get_birthday_for_contact(
                     args, address_book))
             case Commands.BIRTHDAYS:
-                print(AddressBookService.get_birthdays_for_next_week(address_book))
+                upcoming_birthdays = AddressBookService.get_birthdays_for_next_week(
+                    address_book)
+                print("\n".join([f"{birthday['name']}: congratulation_date - {birthday['congratulation_date']}"
+                                 for birthday in upcoming_birthdays])
+                      if upcoming_birthdays else f"{Fore.RED}No upcoming birthdays{Fore.RESET}")
             case Commands.ADD_EMAIL:
                 print(AddressBookService.add_email_to_contact(args, address_book))
             case Commands.ADD_NOTE:
